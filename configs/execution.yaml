@@ -1,0 +1,29 @@
+corpus: execution          # name used for data/raw/<corpus>/ and data/processed/<corpus>/
+
+ingest:
+  file_types: [".pdf", ".txt", ".md"]
+
+chunk:
+  strategy: recursive       # recursive | sentence | fixed
+  chunk_size: 512
+  chunk_overlap: 64
+
+embed:
+  model: text-embedding-3-small   # OpenAI embedding model
+  batch_size: 64
+
+retrieve:
+  top_k: 5
+  score_threshold: 0.0            # min cosine similarity (0.0 = disabled)
+
+answer:
+  model: claude-sonnet-4-6
+  temperature: 0.2
+  max_tokens: 1024
+  system_prompt: |
+    You are a helpful assistant. Answer questions using only the provided context.
+    If the context does not contain enough information, say so clearly.
+
+eval:
+  queries_file: eval/queries/execution.csv
+  metrics: [hit_rate, mrr, faithfulness]

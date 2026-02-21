@@ -1,0 +1,20 @@
+# Core
+anthropic>=0.25.0
+openai>=1.25.0
+faiss-cpu>=1.7.4
+numpy>=1.24.0
+pydantic>=2.0.0
+pyyaml>=6.0
+
+# Document parsing
+pypdf>=4.0.0
+beautifulsoup4>=4.12.0
+
+# Chunking
+langchain-text-splitters>=0.2.0
+
+# App
+streamlit>=1.35.0
+
+# Eval (optional extras)
+# ragas>=0.1.0   # uncomment for LLM-based faithfulness scoring

@@ -1,0 +1,4 @@
+query_id,query,expected_answer,relevant_chunk_ids
+q1,What is the main topic of the corpus?,Depends on the documents ingested.,
+q2,Summarize the key findings.,Depends on the documents ingested.,
+q3,What methodology was used?,Depends on the documents ingested.,
