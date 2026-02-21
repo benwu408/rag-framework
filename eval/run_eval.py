@@ -199,16 +199,15 @@ def _difficulty_breakdown(rows: List[dict], k_vals: List[int]) -> Dict:
         grp = grouped[diff]
         entry: Dict = {"n": len(grp)}
         for k in k_vals:
-            hits  = [r[f"hit_at_{k}"]      for r in grp if f"hit_at_{k}"      in r]
-            precs = [r[f"precision_at_{k}"] for r in grp if f"precision_at_{k}" in r]
-            recs  = [r[f"recall_at_{k}"]    for r in grp if f"recall_at_{k}"    in r]
+            hits  = [r[f"hit_at_{k}"]      for r in grp if r.get(f"hit_at_{k}")      is not None]
+            precs = [r[f"precision_at_{k}"] for r in grp if r.get(f"precision_at_{k}") is not None]
+            recs  = [r[f"recall_at_{k}"]    for r in grp if r.get(f"recall_at_{k}")    is not None]
             if hits:
                 entry[f"hit_at_{k}"]      = round(sum(hits)  / len(hits),  4)
                 entry[f"precision_at_{k}"]= round(sum(precs) / len(precs), 4)
                 entry[f"recall_at_{k}"]   = round(sum(recs)  / len(recs),  4)
-        entry["mrr"] = round(
-            sum(r["mrr"] for r in grp if "mrr" in r) / len(grp), 4
-        )
+        mrr_vals = [r["mrr"] for r in grp if r.get("mrr") is not None]
+        entry["mrr"] = round(sum(mrr_vals) / len(mrr_vals), 4) if mrr_vals else 0.0
         result[diff] = entry
     return result
 

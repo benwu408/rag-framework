@@ -1,2 +1,76 @@
 query_id,query,expected_doc_id,expected_section_contains,expected_answer_contains,difficulty,notes
-q001,,,,,,
+q001,What is the baseline ADV limit for internal algos versus broker-sponsored algos?,64b1ea6beeafaea052da12a4658deafc2633dfbb17b50104e7c6d503b6e3985e,Operational Parameters,10% ADV,easy,policy fact
+q002,How often can an algo selection decision be changed after order inception?,64b1ea6beeafaea052da12a4658deafc2633dfbb17b50104e7c6d503b6e3985e,,every 30 minutes,easy,timing rule
+q003,Which broker algos are approved for routing under the desk algo selection policy?,64b1ea6beeafaea052da12a4658deafc2633dfbb17b50104e7c6d503b6e3985e,,GS,medium,approved broker list
+q004,What benchmark hierarchy applies to urgent versus neutral versus index-rebalance flow?,64b1ea6beeafaea052da12a4658deafc2633dfbb17b50104e7c6d503b6e3985e,,arrival,medium,benchmark hierarchy
+q005,What is the maximum ADV participation rate under best execution obligations?,9180e46478fef2607f10e283ae1d3620ef358f1629aac00703cffe0b327dd9e5,Operational Parameters,12% ADV,easy,policy fact
+q006,What are the three time intervals used to measure best-ex review windows?,9180e46478fef2607f10e283ae1d3620ef358f1629aac00703cffe0b327dd9e5,,decision-to-fill,medium,review metrics
+q007,What benchmarks does the best execution obligations policy define for evaluating order performance?,9180e46478fef2607f10e283ae1d3620ef358f1629aac00703cffe0b327dd9e5,,decision price,medium,benchmark list
+q008,At what ADV threshold are block trades pursued instead of lit slicing?,dd1dd05e0e942af3afdea33c5b232706a235baa2b7b40a4c747699ac8d7293a8,Operational Parameters,3% ADV,easy,block threshold
+q009,What are the upstairs negotiation window hours for block trading?,dd1dd05e0e942af3afdea33c5b232706a235baa2b7b40a4c747699ac8d7293a8,,09:45 to 15:40,easy,timing rule
+q010,Which counterparties are approved for block trading?,dd1dd05e0e942af3afdea33c5b232706a235baa2b7b40a4c747699ac8d7293a8,,bulge-bracket,medium,approved counterparties
+q011,How are block prints evaluated against benchmarks?,dd1dd05e0e942af3afdea33c5b232706a235baa2b7b40a4c747699ac8d7293a8,,decision price,medium,benchmark evaluation
+q012,What is the dark participation range and single ATS exposure cap?,c289c876420d68dd2f1a8671bb122f9005a78d073694e96f640814ebbf163f36,Operational Parameters,25%,easy,participation limits
+q013,Which ATSs are on the approved list for dark pool usage?,c289c876420d68dd2f1a8671bb122f9005a78d073694e96f640814ebbf163f36,,Liquidnet,easy,approved ATS list
+q014,When does dark routing begin relative to primary price discovery?,c289c876420d68dd2f1a8671bb122f9005a78d073694e96f640814ebbf163f36,,primary price discovery,medium,timing rule
+q015,What time intervals are used to measure dark fill reversion for leakage-adjusted implementation shortfall?,c289c876420d68dd2f1a8671bb122f9005a78d073694e96f640814ebbf163f36,,"1, 5, and 30 minutes",medium,measurement intervals
+q016,What time does T+0 preliminary match begin and when is the final break certification due?,04b536b2a4ae50ab354629b6694967ac6e52b6465be1f1068ca88eca4a83674a,,16:10 ET,easy,EOD timing
+q017,When do residual exceptions from end-of-day reconciliation roll to the next day?,04b536b2a4ae50ab354629b6694967ac6e52b6465be1f1068ca88eca4a83674a,,T+1 08:30 ET,easy,exception rollover
+q018,What is the control benchmark for end-of-day reconciliation certification?,04b536b2a4ae50ab354629b6694967ac6e52b6465be1f1068ca88eca4a83674a,,zero unresolved economic break,medium,control benchmark
+q019,How are orders segmented into cohorts for venue assessment?,2d6dcd6bc0f35749e16c854b2e9a66bc388adc1c8a1b8dc931deb7febb48b0a7,Operational Parameters,0-5%,easy,cohort segmentation
+q020,How often are venue scores formally recalculated?,2d6dcd6bc0f35749e16c854b2e9a66bc388adc1c8a1b8dc931deb7febb48b0a7,,first business day of each quarter,easy,review cadence
+q021,What four components make up the execution venue score?,2d6dcd6bc0f35749e16c854b2e9a66bc388adc1c8a1b8dc931deb7febb48b0a7,,effective spread,medium,scoring components
+q022,Which venues are included as primary routing channels in the venue assessment framework?,2d6dcd6bc0f35749e16c854b2e9a66bc388adc1c8a1b8dc931deb7febb48b0a7,,NYSE,medium,venue list
+q023,At what stress utilization level do intraday execution pacing controls automatically tighten?,8836f1fa13b7ba4fe3689936c6a7c54bd07dc5674b62a270f1f1ded4ceed6dd6,Operational Parameters,80%,easy,threshold fact
+q024,What times are mandatory voice check-ins under the intraday risk monitoring policy?,8836f1fa13b7ba4fe3689936c6a7c54bd07dc5674b62a270f1f1ded4ceed6dd6,,10:00,easy,check-in times
+q025,What does the intraday risk benchmark track?,8836f1fa13b7ba4fe3689936c6a7c54bd07dc5674b62a270f1f1ded4ceed6dd6,,VaR drift,medium,risk metrics
+q026,What ADV range is the market impact base model calibrated for?,1318b9557954ec114272f8b61181f6c79e45bfd0732442666ea52404b24e22b2,Operational Parameters,1% to 15% ADV,easy,model calibration range
+q027,How frequently are market impact curves refreshed during the trading day?,1318b9557954ec114272f8b61181f6c79e45bfd0732442666ea52404b24e22b2,,every 15 minutes,easy,refresh cadence
+q028,What are the three components of expected implementation shortfall in the market impact model?,1318b9557954ec114272f8b61181f6c79e45bfd0732442666ea52404b24e22b2,,temporary impact,medium,IS decomposition
+q029,What are the ADV limits for marketable flow and staged child orders under order type guidelines?,8055cb3049c0dec561d56fc75b829fe7b0924fa38a4393cc0a53f6906115e31e,Operational Parameters,10%,easy,ADV limits
+q030,What time window applies to market and IOC order instructions?,8055cb3049c0dec561d56fc75b829fe7b0924fa38a4393cc0a53f6906115e31e,,09:35 and 15:30,easy,timing rule
+q031,What are the exchange cutoff times for MOO and MOC orders?,8055cb3049c0dec561d56fc75b829fe7b0924fa38a4393cc0a53f6906115e31e,,09:28 and 15:45,easy,auction cutoffs
+q032,What benchmark is used for urgent flow versus scheduled liquidity capture mandates?,8055cb3049c0dec561d56fc75b829fe7b0924fa38a4393cc0a53f6906115e31e,,arrival price for urgent,medium,benchmark selection
+q033,What is the intraday ADV limit for single-name turnover pacing under the position limit policy?,5885c9a6a26dce1fd5b21e413c698d3009d0f3071612f38a5548fb37f5c19fb4,Operational Parameters,15% ADV,easy,turnover limit
+q034,When are mandatory checkpoint attestations required under the position limit policy?,5885c9a6a26dce1fd5b21e413c698d3009d0f3071612f38a5548fb37f5c19fb4,,10:30,easy,checkpoint timing
+q035,How often are stress overlays updated in position limit monitoring?,5885c9a6a26dce1fd5b21e413c698d3009d0f3071612f38a5548fb37f5c19fb4,,every hour,medium,update cadence
+q036,How are orders segmented for TCA analysis under the post-trade analysis policy?,8b43548eafb87117631faea6d1fc70c50f65bf462afae348e5cc09da7b50c954,Operational Parameters,5%,easy,TCA segmentation
+q037,When are TCA snapshots finalized after trade date?,8b43548eafb87117631faea6d1fc70c50f65bf462afae348e5cc09da7b50c954,,T+1 07:30 ET,easy,finalization timing
+q038,Which benchmarks are calculated per mandate in the post-trade analysis framework?,8b43548eafb87117631faea6d1fc70c50f65bf462afae348e5cc09da7b50c954,,interval VWAP,medium,benchmark list
+q039,How frequently are intraday TCA snapshots produced?,8b43548eafb87117631faea6d1fc70c50f65bf462afae348e5cc09da7b50c954,,every hour,medium,snapshot cadence
+q040,What ADV thresholds trigger automated rejection of parent and child orders?,8c282fa2ebecae81c4b88a83b753777d0bd966b93554c3eb5645fa63d4e2f3a2,Operational Parameters,20% ADV,easy,rejection thresholds
+q041,How frequently is pre-trade validation rerun for live staged baskets?,8c282fa2ebecae81c4b88a83b753777d0bd966b93554c3eb5645fa63d4e2f3a2,,60 seconds,medium,revalidation cadence
+q042,What metrics measure pre-trade risk control effectiveness?,8c282fa2ebecae81c4b88a83b753777d0bd966b93554c3eb5645fa63d4e2f3a2,,prevented loss proxy,medium,effectiveness metrics
+q043,What is the baseline child participation rate and dynamic expansion threshold in the SOR policy?,a3a476ac33d06cd1d14b783c659e1ad4e3239ccc5fa70936af3c7a12ca5596d1,Operational Parameters,9% ADV,easy,participation parameters
+q044,Which venues are included in the primary SOR routing stack?,a3a476ac33d06cd1d14b783c659e1ad4e3239ccc5fa70936af3c7a12ca5596d1,,NYSE,easy,venue list
+q045,When does the SOR switch to dark-first block seeking mode?,a3a476ac33d06cd1d14b783c659e1ad4e3239ccc5fa70936af3c7a12ca5596d1,,after 10:30 ET,medium,routing logic
+q046,What quote stability score threshold triggers dynamic SOR expansion to 14% ADV?,a3a476ac33d06cd1d14b783c659e1ad4e3239ccc5fa70936af3c7a12ca5596d1,,0.8,medium,expansion threshold
+q047,What are the routine and hard cap ADV participation limits in thin markets?,9f6a2586c2cd6937ecc0e7804e62b5c52404867d9f561acdeb7cba9c32de476f,Operational Parameters,5% ADV,easy,ADV caps
+q048,During what time windows is execution avoided in thin markets?,9f6a2586c2cd6937ecc0e7804e62b5c52404867d9f561acdeb7cba9c32de476f,,first 15 minutes and last 20 minutes,easy,timing restriction
+q049,What benchmark is used for thin market execution?,9f6a2586c2cd6937ecc0e7804e62b5c52404867d9f561acdeb7cba9c32de476f,,arrival-plus-risk-adjusted,medium,benchmark type
+q050,What are the VWAP ADV limits under normal versus elevated liquidity conditions?,64047824913f691fc2b90e0b66c3fa94210668f820fc575e8037c76c3fcad070,Operational Parameters,12%,easy,ADV limits
+q051,What is the standard VWAP execution time window?,64047824913f691fc2b90e0b66c3fa94210668f820fc575e8037c76c3fcad070,,09:40 to 15:45,easy,execution window
+q052,What is the primary VWAP benchmark and when are alternative intervals permitted?,64047824913f691fc2b90e0b66c3fa94210668f820fc575e8037c76c3fcad070,,full-day VWAP,medium,benchmark rule
+q053,What condition must be met to raise VWAP participation to 18% ADV?,64047824913f691fc2b90e0b66c3fa94210668f820fc575e8037c76c3fcad070,,elevated liquidity events,medium,approval condition
+q054,Who are the authors of the RL for trade execution paper and which institution are they from?,8d86b7fa6c40b1c82b0e418c0cdd5ffdf4fc0357ead37fa431091cbb6d255a37,,Cheridito,easy,paper authorship
+q055,What probability distribution models market and limit order allocations in the ETH Zurich RL framework?,8d86b7fa6c40b1c82b0e418c0cdd5ffdf4fc0357ead37fa431091cbb6d255a37,,logistic-normal,medium,technical method
+q056,Which Swiss funding grant supported the ETH Zurich trade execution RL research?,8d86b7fa6c40b1c82b0e418c0cdd5ffdf4fc0357ead37fa431091cbb6d255a37,,10003723,medium,grant acknowledgment
+q057,What financial markets does the neural network algorithmic trading paper focus on?,ac707ee018c72f13426fda76ea4e2cdf18692239830a1fc979fda94c93ab62d3,,cryptocurrency,easy,paper scope
+q058,What three data sources does the multi-timeframe neural network trading system integrate?,ac707ee018c72f13426fda76ea4e2cdf18692239830a1fc979fda94c93ab62d3,,on-chain,medium,system inputs
+q059,What characteristic makes cryptocurrency markets unique compared to traditional markets?,ac707ee018c72f13426fda76ea4e2cdf18692239830a1fc979fda94c93ab62d3,,24/7,medium,market property
+q060,How is order book imbalance (OBI) defined in the agent-based simulation paper?,4ab469ae3877005016381404eef76c01d4e110784bab85b4d6adfcc125c61ebc,,number of buy orders minus the number of sell orders,easy,OBI definition
+q061,In what type of market does the OBI execution algorithm outperform the conventional algorithm?,4ab469ae3877005016381404eef76c01d4e110784bab85b4d6adfcc125c61ebc,,unstable,medium,research finding
+q062,How does the OBI execution algorithm perform in markets with spoofing?,4ab469ae3877005016381404eef76c01d4e110784bab85b4d6adfcc125c61ebc,,not significantly worse,medium,robustness result
+q063,At which conference and in which city was the Simudyne RL execution paper presented?,9f4a5ec10804ee4116f732eb75db7e111c87404d35d82e2670b851cbb96a9f14,,Singapore,easy,conference venue
+q064,How does the Simudyne paper decompose total execution cost?,9f4a5ec10804ee4116f732eb75db7e111c87404d35d82e2670b851cbb96a9f14,,market risk,medium,cost decomposition
+q065,What seminal work on execution algorithm optimization does the Simudyne paper cite?,9f4a5ec10804ee4116f732eb75db7e111c87404d35d82e2670b851cbb96a9f14,,Almgren and Chriss,medium,key citation
+q066,What analytical framework do Belov et al. introduce as an alternative to PCA?,0608a8fe304e370b250f23106ca4b074897df0ec29a611a18d0a18aa20f3b246,,Christoffel function,medium,framework name
+q067,What is the weak form of the automated trading machine problem as defined by Belov et al.?,0608a8fe304e370b250f23106ca4b074897df0ec29a611a18d0a18aa20f3b246,,legally available data,hard,problem formulation
+q068,What illegal automated trading practice is described as an example in the Belov et al. paper?,0608a8fe304e370b250f23106ca4b074897df0ec29a611a18d0a18aa20f3b246,,frontrun,hard,illegal practice example
+q069,How does Meta define superintelligence in its 10-K filing?,fcd6d44041f00dd1947d784f0ecec34649a89a40ce1d66a6b723b23d299cfa37,,surpasses human intelligence,easy,10-K definition
+q070,What words does Meta use to identify forward-looking statements in its 10-K?,fcd6d44041f00dd1947d784f0ecec34649a89a40ce1d66a6b723b23d299cfa37,Forward-Looking Statements,believe,medium,disclosure language
+q071,What does the Dropbox Rewind feature allow users to do?,6400d44b82b2ff559189c588f271c3b71de704275b00275cd1474d17ec8224e7,,back to a specific point in time,easy,product feature
+q072,What percentage of Dropbox Business teams have linked third-party applications?,6400d44b82b2ff559189c588f271c3b71de704275b00275cd1474d17ec8224e7,,80%,easy,10-K statistic
+q073,How far back does Dropbox version history allow file recovery?,6400d44b82b2ff559189c588f271c3b71de704275b00275cd1474d17ec8224e7,,365 days,medium,product specification
+q074,What types of competitors does Metropolitan Bank Holding Corp face according to its 10-K?,e1456eb0f44dcb452861664f7db9ba972d9bfbd32fb171cf25bc756b56e1c24a,Competitors,commercial banks,medium,competitive landscape
+q075,What is the desk policy on executing trades in cryptocurrency or digital asset markets?,,,,easy,cannot-answer — no such policy in corpus

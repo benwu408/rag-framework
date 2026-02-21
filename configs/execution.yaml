@@ -1,12 +1,12 @@
 corpus: execution          # name used for data/raw/<corpus>/ and data/processed/<corpus>/
 
 ingest:
-  file_types: [".pdf", ".txt", ".md"]
+  file_types: [".pdf", ".txt", ".md", ".html", ".htm"]
 
 chunk:
   strategy: recursive       # recursive | sentence | fixed
-  chunk_size: 512
-  chunk_overlap: 64
+  chunk_size: 1500
+  chunk_overlap: 200
 
 embed:
   model: text-embedding-3-small   # OpenAI embedding model

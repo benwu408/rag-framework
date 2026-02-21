@@ -31,7 +31,10 @@ import re
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, TypedDict
 
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
 
 from src.config import Config
 from src.retrieve import retrieve
@@ -62,21 +65,32 @@ class AnswerResult(TypedDict):
 # Fixed citation + JSON rules appended to every system prompt.
 # The user-facing persona lives in cfg.answer.system_prompt (YAML).
 _CITATION_RULES = """
-When answering:
+CRITICAL CITATION REQUIREMENT:
+Every factual sentence in your "answer" field MUST end with an inline citation \
+tag like [ref_1] or [ref_1][ref_2]. Do NOT write any sentence that states a fact \
+without a [ref_N] tag. The tag must appear inside the answer string itself — \
+putting refs only in the citations array is NOT sufficient.
+
+CORRECT example answer string:
+"The participation limit is 10% ADV for marketable flow [ref_1]. \
+Broker-sponsored algos are capped at 12% ADV unless explicitly approved [ref_2]."
+
+WRONG (no inline tags — do not do this):
+"The participation limit is 10% ADV for marketable flow."
+
+Rules:
 1. Use ONLY information present in the provided context passages.
-2. Cite every factual claim by placing the passage reference ID immediately \
-after the claim in brackets, e.g. "VWAP is computed as price × volume [ref_1]."
+2. Every factual claim in the answer string must have [ref_N] immediately after it.
 3. Use the EXACT reference IDs shown in the context headers — do not invent IDs.
 4. A single claim may carry multiple citations: [ref_1][ref_2].
 5. If the context does not contain sufficient information to answer, set \
 "cannot_answer" to true and leave "answer" as an empty string.
-6. Rate your confidence: "high" if the context directly and fully addresses \
-the question, "medium" if partially, "low" if only weakly.
+6. Rate confidence: "high" = context fully answers it, "medium" = partially, "low" = weakly.
 
-Return ONLY valid JSON — no markdown fences, no prose before or after the object. \
-The response must start with { and end with }. Use this exact schema:
+Return ONLY valid JSON — no markdown fences, no prose before or after. \
+Response must start with { and end with }. Exact schema:
 {
-  "answer": "...",
+  "answer": "Every sentence has inline [ref_N] tags [ref_1]. Like this [ref_2].",
   "citations": ["ref_1", "ref_2"],
   "confidence": "high",
   "supported_claims": [

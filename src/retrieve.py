@@ -21,6 +21,9 @@ from __future__ import annotations
 from typing import List, Optional
 
 import numpy as np
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from src.config import Config
 from src.embed_index import load_index, embed_texts

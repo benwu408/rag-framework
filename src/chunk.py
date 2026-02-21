@@ -163,7 +163,7 @@ def _approx_page(char_start: int, total_chars: int, num_pages: Optional[int]) ->
 
 def _split_recursive(text: str, size: int, overlap: int) -> List[str]:
     try:
-        from langchain.text_splitter import RecursiveCharacterTextSplitter
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
     except ImportError:
         raise ImportError(
             "Install langchain-text-splitters: pip install langchain-text-splitters"

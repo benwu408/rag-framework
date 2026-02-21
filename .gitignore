@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.DS_Store
+
+# Large processed artifacts — rebuild with build_pipeline.py
+data/processed/
+
+# Raw documents — add manually if you want them versioned
+data/raw/

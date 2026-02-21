@@ -20,6 +20,9 @@ from pathlib import Path
 from typing import List
 
 import numpy as np
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from src.config import Config, load_config
 from src.chunk import load_chunks
