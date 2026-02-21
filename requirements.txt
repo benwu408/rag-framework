@@ -16,5 +16,9 @@ langchain-text-splitters>=0.2.0
 # App
 streamlit>=1.35.0
 
-# Eval (optional extras)
-# ragas>=0.1.0   # uncomment for LLM-based faithfulness scoring
+# Eval — statistical analysis
+pandas>=2.0.0
+scipy>=1.11.0
+
+# Eval (optional — LLM-based faithfulness scoring)
+# ragas>=0.1.0
