@@ -2,7 +2,7 @@
 
 A corpus-agnostic Retrieval-Augmented Generation framework — embed any document collection, retrieve grounded answers with inline citations, and evaluate retrieval quality with real metrics.
 
-**Stack:** Python · OpenAI Embeddings · FAISS · Claude (Anthropic) · Streamlit · pypdf · BeautifulSoup
+**Stack:** Python · OpenAI Embeddings · FAISS · GPT-4o mini (OpenAI) · Streamlit · pypdf · BeautifulSoup
 
 ---
 
@@ -49,7 +49,6 @@ pip install -r requirements.txt
 
 ```bash
 export OPENAI_API_KEY=sk-...
-export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
 ### 3. Add your documents

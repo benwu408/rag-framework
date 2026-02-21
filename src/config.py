@@ -42,7 +42,7 @@ class RetrieveConfig(BaseModel):
 
 
 class AnswerConfig(BaseModel):
-    model: str = "claude-sonnet-4-6"
+    model: str = "gpt-4o-mini"
     temperature: float = 0.2
     max_tokens: int = 1024
     system_prompt: str = "You are a helpful assistant. Answer using only the provided context."

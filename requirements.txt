@@ -1,5 +1,4 @@
 # Core
-anthropic>=0.25.0
 openai>=1.25.0
 faiss-cpu>=1.7.4
 numpy>=1.24.0

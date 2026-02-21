@@ -1,5 +1,5 @@
 """
-rag_answer.py – grounded answer generation with inline citations via Claude.
+rag_answer.py – grounded answer generation with inline citations via GPT-4o mini.
 
 Public API
 ----------
@@ -31,7 +31,7 @@ import re
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, TypedDict
 
-import anthropic
+from openai import OpenAI
 
 from src.config import Config
 from src.retrieve import retrieve
@@ -131,30 +131,30 @@ def _build_numbered_context(chunks: List[dict]) -> tuple[str, Dict[str, str]]:
 
 
 # ---------------------------------------------------------------------------
-# Claude API call
+# OpenAI API call
 # ---------------------------------------------------------------------------
 
-def _get_client() -> anthropic.Anthropic:
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+def _get_client() -> OpenAI:
+    api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise EnvironmentError("ANTHROPIC_API_KEY environment variable not set.")
-    return anthropic.Anthropic(api_key=api_key)
+        raise EnvironmentError("OPENAI_API_KEY environment variable not set.")
+    return OpenAI(api_key=api_key)
 
 
-def _call_claude(
-    client:   anthropic.Anthropic,
+def _call_openai(
+    client:   OpenAI,
     messages: list,
     cfg:      Config,
 ) -> str:
     system = cfg.answer.system_prompt.rstrip() + "\n" + _CITATION_RULES
-    resp   = client.messages.create(
+    full_messages = [{"role": "system", "content": system}] + messages
+    resp = client.chat.completions.create(
         model       = cfg.answer.model,
         max_tokens  = cfg.answer.max_tokens,
         temperature = cfg.answer.temperature,
-        system      = system,
-        messages    = messages,
+        messages    = full_messages,
     )
-    return resp.content[0].text
+    return resp.choices[0].message.content
 
 
 # ---------------------------------------------------------------------------
@@ -268,7 +268,7 @@ def rag_answer(query: str, chunks: List[dict], cfg: Config) -> AnswerResult:
     client = _get_client()
 
     # ---- Attempt 1 ----
-    raw    = _call_claude(client, messages, cfg)
+    raw    = _call_openai(client, messages, cfg)
     result = _parse_response(raw, ref_map)
 
     if result is not None:
@@ -285,7 +285,7 @@ def rag_answer(query: str, chunks: List[dict], cfg: Config) -> AnswerResult:
         {"role": "assistant", "content": raw},
         {"role": "user",      "content": _STRICT_RETRY_MSG},
     ]
-    raw2   = _call_claude(client, retry_messages, cfg)
+    raw2   = _call_openai(client, retry_messages, cfg)
     result = _parse_response(raw2, ref_map)
 
     if result is not None:
