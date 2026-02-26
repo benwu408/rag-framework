@@ -43,6 +43,7 @@ import csv
 import json
 import re
 import sys
+import time
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -288,6 +289,20 @@ def _print_table(agg: dict) -> None:
             print(f"  {label:<26}  {v:.4f}" if v is not None else f"  {label:<26}  n/a")
         _hline()
 
+    # ── Latency ────────────────────────────────────────────────────────────
+    lat = agg.get("latency", {})
+    if lat:
+        _section("LATENCY")
+        _row("Retrieval (batch)",     f"{lat.get('retrieval_batch_s', 0):.2f} s")
+        _row("Retrieval (per query)", f"{lat.get('retrieval_per_query_ms', 0):.1f} ms")
+        if "generation_mean_ms" in lat:
+            _row("Generation mean",   f"{lat['generation_mean_ms']:.1f} ms")
+            _row("Generation p50",    f"{lat['generation_p50_ms']:.1f} ms")
+            _row("Generation p95",    f"{lat['generation_p95_ms']:.1f} ms")
+            _row("Generation p99",    f"{lat['generation_p99_ms']:.1f} ms")
+            _row("Total mean",        f"{lat['total_mean_ms']:.1f} ms")
+        _hline()
+
     # ── Correlation ────────────────────────────────────────────────────────
     corr = agg.get("correlation", {}).get("top1_score_vs_correctness", {})
     if corr.get("r") is not None:
@@ -372,7 +387,12 @@ def run_eval(
     # ── Retrieval pass: one batched OpenAI call ───────────────────────────
     query_texts = [r["query"] for r in raw_queries]
     print(f"[eval] embedding {len(query_texts)} queries…")
+    retrieval_t0 = time.time()
     all_results = retrieve_batch(query_texts, cfg, k=max_k)
+    retrieval_batch_s = time.time() - retrieval_t0
+    retrieval_per_query_ms = (retrieval_batch_s / len(query_texts)) * 1000
+    print(f"[eval] retrieval done in {retrieval_batch_s:.2f}s "
+          f"({retrieval_per_query_ms:.1f}ms per query)\n")
 
     # ── Evaluate each query ───────────────────────────────────────────────
     rows: List[dict] = []
@@ -425,15 +445,21 @@ def run_eval(
         row["hallucination_rate"]  = None
         row["answer_correctness"]  = None
         row["cannot_answer_correct"] = None
+        row["generation_latency_ms"] = None
+        row["total_latency_ms"]    = None
 
         if generate:
             try:
+                gen_t0 = time.time()
                 result: AnswerResult = rag_answer(query, top_chunks, cfg)
+                gen_latency_ms = (time.time() - gen_t0) * 1000
             except Exception as exc:
                 print(f"  [eval] ERROR generating answer for {qid!r}: {exc}")
                 rows.append(row)
                 continue
 
+            row["generation_latency_ms"] = round(gen_latency_ms, 1)
+            row["total_latency_ms"] = round(retrieval_per_query_ms + gen_latency_ms, 1)
             row["answer"]      = result["answer"][:300]
             row["cannot_answer"] = result["cannot_answer"]
 
@@ -457,6 +483,7 @@ def run_eval(
         ) if not is_cannot_query else "cannot-answer query"
         gen_str = (
             f"  hall={row.get('hallucination_rate', 'n/a')}"
+            f"  gen={row.get('generation_latency_ms', 'n/a')}ms"
         ) if generate else ""
         print(f"  [{qid or '?':>4}]  {ret_str}{gen_str}  | {query[:55]}")
 
@@ -505,12 +532,30 @@ def run_eval(
         [r.get("answer_correctness") for r in rows],
     ) if generate else {}
 
+    # Latency stats
+    gen_latencies = [r["generation_latency_ms"] for r in rows
+                     if r.get("generation_latency_ms") is not None]
+    latency_agg: dict = {
+        "retrieval_batch_s":    round(retrieval_batch_s, 2),
+        "retrieval_per_query_ms": round(retrieval_per_query_ms, 1),
+    }
+    if gen_latencies:
+        gen_arr = np.array(gen_latencies, dtype=float)
+        latency_agg.update({
+            "generation_mean_ms": round(float(np.mean(gen_arr)), 1),
+            "generation_p50_ms":  round(float(np.percentile(gen_arr, 50)), 1),
+            "generation_p95_ms":  round(float(np.percentile(gen_arr, 95)), 1),
+            "generation_p99_ms":  round(float(np.percentile(gen_arr, 99)), 1),
+            "total_mean_ms":      round(float(retrieval_per_query_ms + np.mean(gen_arr)), 1),
+        })
+
     agg = {
         "corpus":       cfg.corpus,
         "timestamp":    datetime.now(timezone.utc).isoformat(),
         "n_queries":    len(rows),
         "retrieval":    retrieval_agg,
         "generation":   generation_agg,
+        "latency":      latency_agg,
         "by_difficulty": _difficulty_breakdown(rows, k_vals),
         "correlation":  {"top1_score_vs_correctness": corr},
     }
