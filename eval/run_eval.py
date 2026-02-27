@@ -54,7 +54,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import load_config, Config
-from src.embed_index import load_index
+from src.embed_index import load_index, embed_texts
 from src.retrieve import retrieve_batch
 from src.rag_answer import rag_answer, AnswerResult
 
@@ -293,8 +293,11 @@ def _print_table(agg: dict) -> None:
     lat = agg.get("latency", {})
     if lat:
         _section("LATENCY")
-        _row("Retrieval (batch)",     f"{lat.get('retrieval_batch_s', 0):.2f} s")
-        _row("Retrieval (per query)", f"{lat.get('retrieval_per_query_ms', 0):.1f} ms")
+        _row("Embed (batch)",         f"{lat.get('embed_batch_s', 0):.2f} s")
+        _row("Retrieval (total)",     f"{lat.get('retrieval_batch_s', 0):.2f} s")
+        _row("FAISS search p50",      f"{lat.get('search_p50_ms', 0):.3f} ms")
+        _row("FAISS search p95",      f"{lat.get('search_p95_ms', 0):.3f} ms")
+        _row("FAISS search p99",      f"{lat.get('search_p99_ms', 0):.3f} ms")
         if "generation_mean_ms" in lat:
             _row("Generation mean",   f"{lat['generation_mean_ms']:.1f} ms")
             _row("Generation p50",    f"{lat['generation_p50_ms']:.1f} ms")
@@ -384,15 +387,48 @@ def run_eval(
         doc_chunk_counts[c.get("doc_id", "")] += 1
     print(f"[eval] index: {index.ntotal:,} vectors  |  {len(doc_chunk_counts):,} documents\n")
 
-    # ── Retrieval pass: one batched OpenAI call ───────────────────────────
+    # ── Retrieval pass ──────────────────────────────────────────────────
     query_texts = [r["query"] for r in raw_queries]
+
+    # Phase 1: batch embed (one OpenAI API call)
     print(f"[eval] embedding {len(query_texts)} queries…")
-    retrieval_t0 = time.time()
-    all_results = retrieve_batch(query_texts, cfg, k=max_k)
-    retrieval_batch_s = time.time() - retrieval_t0
+    embed_t0 = time.time()
+    q_vecs = embed_texts(query_texts, cfg)
+    embed_s = time.time() - embed_t0
+    print(f"[eval] embedding done in {embed_s:.2f}s")
+
+    # Phase 2: per-query FAISS search (timed individually)
+    k_eff = min(max_k, index.ntotal)
+    threshold = cfg.retrieve.score_threshold
+    retrieval_latencies_ms: List[float] = []
+    all_results: List[List[dict]] = []
+
+    for q_vec in q_vecs:
+        search_t0 = time.time()
+        scores, indices = index.search(q_vec.reshape(1, -1), k_eff)
+        search_ms = (time.time() - search_t0) * 1000
+        retrieval_latencies_ms.append(search_ms)
+
+        results: List[dict] = []
+        for score, idx in zip(scores[0], indices[0]):
+            if idx == -1:
+                continue
+            if float(score) < threshold:
+                continue
+            chunk = dict(chunk_meta[idx])
+            chunk["score"] = float(score)
+            results.append(chunk)
+            if len(results) >= k_eff:
+                break
+        all_results.append(results)
+
+    retrieval_batch_s = embed_s + sum(retrieval_latencies_ms) / 1000
     retrieval_per_query_ms = (retrieval_batch_s / len(query_texts)) * 1000
-    print(f"[eval] retrieval done in {retrieval_batch_s:.2f}s "
-          f"({retrieval_per_query_ms:.1f}ms per query)\n")
+    search_arr = np.array(retrieval_latencies_ms, dtype=float)
+    print(f"[eval] FAISS search p50={np.percentile(search_arr, 50):.2f}ms  "
+          f"p95={np.percentile(search_arr, 95):.2f}ms  "
+          f"p99={np.percentile(search_arr, 99):.2f}ms")
+    print(f"[eval] retrieval total {retrieval_batch_s:.2f}s\n")
 
     # ── Evaluate each query ───────────────────────────────────────────────
     rows: List[dict] = []
@@ -536,8 +572,12 @@ def run_eval(
     gen_latencies = [r["generation_latency_ms"] for r in rows
                      if r.get("generation_latency_ms") is not None]
     latency_agg: dict = {
-        "retrieval_batch_s":    round(retrieval_batch_s, 2),
+        "embed_batch_s":          round(embed_s, 2),
+        "retrieval_batch_s":      round(retrieval_batch_s, 2),
         "retrieval_per_query_ms": round(retrieval_per_query_ms, 1),
+        "search_p50_ms":          round(float(np.percentile(search_arr, 50)), 3),
+        "search_p95_ms":          round(float(np.percentile(search_arr, 95)), 3),
+        "search_p99_ms":          round(float(np.percentile(search_arr, 99)), 3),
     }
     if gen_latencies:
         gen_arr = np.array(gen_latencies, dtype=float)
