@@ -26,6 +26,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import load_config, Config
+from src.ingest import load_documents, save_docs, read_docs_jsonl
+from src.chunk import chunk_documents, save_chunks
+from src.embed_index import run_embed_index
 
 
 # ---------------------------------------------------------------------------
@@ -33,7 +36,6 @@ from src.config import load_config, Config
 # ---------------------------------------------------------------------------
 
 def run_ingest(cfg: Config) -> list:
-    from src.ingest import load_documents, save_docs
     print("\n" + "─" * 60)
     print("STEP 1 — INGEST")
     print("─" * 60)
@@ -43,8 +45,6 @@ def run_ingest(cfg: Config) -> list:
 
 
 def run_chunk(cfg: Config, docs: list | None = None) -> list:
-    from src.ingest import read_docs_jsonl
-    from src.chunk import chunk_documents, save_chunks
     print("\n" + "─" * 60)
     print("STEP 2 — CHUNK")
     print("─" * 60)
@@ -56,7 +56,6 @@ def run_chunk(cfg: Config, docs: list | None = None) -> list:
 
 
 def run_embed(cfg: Config) -> None:
-    from src.embed_index import run_embed_index
     print("\n" + "─" * 60)
     print("STEP 3 — EMBED + INDEX")
     print("─" * 60)
