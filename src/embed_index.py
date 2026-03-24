@@ -19,8 +19,10 @@ import time
 from pathlib import Path
 from typing import List
 
+import faiss
 import numpy as np
 from dotenv import load_dotenv
+from openai import OpenAI, RateLimitError, APIError
 
 load_dotenv()
 
@@ -42,10 +44,6 @@ _JITTER      = 0.1   # ± 10 % of current delay
 # ---------------------------------------------------------------------------
 
 def _get_openai_client():
-    try:
-        from openai import OpenAI
-    except ImportError:
-        raise ImportError("Install openai: pip install openai")
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise EnvironmentError("OPENAI_API_KEY environment variable not set.")
@@ -58,11 +56,6 @@ def _embed_batch(client, batch: List[str], model: str) -> List[List[float]]:
     Retries up to _MAX_RETRIES times with exponential backoff + jitter on
     RateLimitError or transient APIError.
     """
-    try:
-        from openai import RateLimitError, APIError
-    except ImportError:
-        raise ImportError("Install openai: pip install openai")
-
     delay = _BASE_DELAY
     for attempt in range(_MAX_RETRIES):
         try:
@@ -124,28 +117,19 @@ def embed_texts(texts: List[str], cfg: Config) -> np.ndarray:
 # FAISS index
 # ---------------------------------------------------------------------------
 
-def build_index(embeddings: np.ndarray) -> "faiss.Index":
-    try:
-        import faiss
-    except ImportError:
-        raise ImportError("Install faiss: pip install faiss-cpu")
+def build_index(embeddings: np.ndarray) -> faiss.Index:
     dim   = embeddings.shape[1]
     index = faiss.IndexFlatIP(dim)
     index.add(embeddings)
     return index
 
 
-def save_index(index: "faiss.Index", chunks: List[dict], cfg: Config) -> None:
+def save_index(index: faiss.Index, chunks: List[dict], cfg: Config) -> None:
     """
     Persist the FAISS index and parallel chunk metadata to disk.
     chunk_meta.json[i] corresponds to FAISS row i.
     Prints file sizes after writing.
     """
-    try:
-        import faiss
-    except ImportError:
-        raise ImportError("Install faiss: pip install faiss-cpu")
-
     out_dir = cfg.processed_dir
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -163,15 +147,11 @@ def save_index(index: "faiss.Index", chunks: List[dict], cfg: Config) -> None:
     )
 
 
-def load_index(cfg: Config) -> tuple["faiss.Index", List[dict]]:
+def load_index(cfg: Config) -> tuple[faiss.Index, List[dict]]:
     """
     Load FAISS index and chunk metadata from disk.
     Returns (index, chunks) where chunks[i] matches FAISS row i.
     """
-    try:
-        import faiss
-    except ImportError:
-        raise ImportError("Install faiss: pip install faiss-cpu")
     if not cfg.index_path.exists():
         raise FileNotFoundError(
             f"FAISS index not found: {cfg.index_path}. Run embed_index first."
