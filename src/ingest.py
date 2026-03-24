@@ -21,7 +21,7 @@ Pipeline
 --------
     docs = load_documents(cfg)       # walk raw dir → list[dict]
     save_docs(docs, cfg)             # write docs.jsonl
-    docs = load_docs(cfg)            # read docs.jsonl back
+    docs = read_docs_jsonl(cfg)            # read docs.jsonl back
 """
 
 from __future__ import annotations
@@ -287,7 +287,7 @@ def save_docs(docs: List[dict], cfg: Config) -> None:
     print(f"[ingest] saved {len(docs)} docs → {out}")
 
 
-def load_docs(cfg: Config) -> List[dict]:
+def read_docs_jsonl(cfg: Config) -> List[dict]:
     """Read docs.jsonl from disk."""
     path = cfg.processed_dir / "docs.jsonl"
     if not path.exists():

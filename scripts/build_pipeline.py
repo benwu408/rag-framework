@@ -43,13 +43,13 @@ def run_ingest(cfg: Config) -> list:
 
 
 def run_chunk(cfg: Config, docs: list | None = None) -> list:
-    from src.ingest import load_docs
+    from src.ingest import read_docs_jsonl
     from src.chunk import chunk_documents, save_chunks
     print("\n" + "─" * 60)
     print("STEP 2 — CHUNK")
     print("─" * 60)
     if docs is None:
-        docs = load_docs(cfg)
+        docs = read_docs_jsonl(cfg)
     chunks = chunk_documents(docs, cfg)
     save_chunks(chunks, cfg)
     return chunks

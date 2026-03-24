@@ -239,6 +239,7 @@ def chunk_documents(docs: List[dict], cfg: Config) -> List[dict]:
     all_chunks: List[dict] = []
 
     for doc in docs:
+        # doc_id and text are required; title/source/metadata are optional
         doc_id     = doc["doc_id"]
         text       = doc["text"]
         title      = doc.get("title", "")
