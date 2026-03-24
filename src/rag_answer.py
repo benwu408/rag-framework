@@ -6,7 +6,7 @@ Public API
   rag_answer(query, chunks, cfg)  →  AnswerResult
       Pure generation step. Takes pre-retrieved chunks, returns structured result.
 
-  answer(query, cfg, k)           →  (AnswerResult, List[dict])
+  retrieve_and_answer(query, cfg, k) →  (AnswerResult, List[dict])
       Convenience wrapper: retrieve then answer.
 
   save_feedback(...)              →  None
@@ -322,7 +322,7 @@ def rag_answer(query: str, chunks: List[dict], cfg: Config) -> AnswerResult:
     )
 
 
-def answer(
+def retrieve_and_answer(
     query: str,
     cfg:   Config,
     k:     Optional[int] = None,

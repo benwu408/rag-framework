@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import streamlit as st
 
 from src.config import load_config, list_corpora
-from src.rag_answer import AnswerResult, answer as rag_answer, save_feedback
+from src.rag_answer import AnswerResult, retrieve_and_answer, save_feedback
 
 
 # ---------------------------------------------------------------------------
@@ -289,7 +289,7 @@ if query:
     with st.chat_message("assistant"):
         with st.spinner("Retrieving and generating…"):
             try:
-                result, chunks = rag_answer(query, cfg, k=k_slider)
+                result, chunks = retrieve_and_answer(query, cfg, k=k_slider)
             except Exception as exc:
                 st.error(f"Error: {exc}")
                 st.stop()
